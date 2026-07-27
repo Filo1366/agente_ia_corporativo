@@ -1,26 +1,29 @@
 import os
-import chainlit as cl
+import streamlit as st
 from langchain_cohere import CohereEmbeddings, ChatCohere
 from langchain_community.vectorstores import FAISS
 from langchain_classic.chains import create_retrieval_chain
 from langchain_classic.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
 
+
+st.set_page_config(page_title="Asistente Corporativo", page_icon="💼")
+st.title("💼 Asistente de Políticas de la Empresa")
+
+@st.cache_resource
 def iniciar_agente():
     COHERE_API_KEY = os.environ.get("COHERE_API_KEY")
     
-    # 1. Cargamos el modelo de embeddings
+
     embeddings = CohereEmbeddings(model="embed-multilingual-v3.0", cohere_api_key=COHERE_API_KEY)
-    
-    # 2. MAGIA: Cargamos la base de datos pre-calculada en lugar de leer el PDF
+
     vectorstore = FAISS.load_local(
         "faiss_index", 
         embeddings, 
-        allow_dangerous_deserialization=True # Requisito de seguridad de FAISS
+        allow_dangerous_deserialization=True
     )
     retriever = vectorstore.as_retriever()
 
-    # 3. Configuramos el cerebro del chat
     llm = ChatCohere(model="command-r-08-2024", cohere_api_key=COHERE_API_KEY)
 
     system_prompt = (
@@ -39,30 +42,33 @@ def iniciar_agente():
     rag_chain = create_retrieval_chain(retriever, question_answer_chain)
     return rag_chain
 
-@cl.on_chat_start
-async def start():
-    try:
-        rag_chain = iniciar_agente()
-        cl.user_session.set("rag_chain", rag_chain)
-        
-        await cl.Message(
-            content="¡Listo! Soy tu asistente corporativo. ¿Qué dudas tienes sobre las políticas de la empresa?"
-        ).send()
-        
-    except Exception as e:
-        await cl.Message(content=f"⚠️ Error al iniciar el agente: {str(e)}").send()
 
-@cl.on_message
-async def main(message: cl.Message):
-    try:
-        rag_chain = cl.user_session.get("rag_chain")
+if "messages" not in st.session_state:
+    st.session_state.messages = [{"role": "assistant", "content": "¡Hola! Soy tu asistente corporativo. ¿Qué dudas tienes sobre las políticas?"}]
 
-        if not rag_chain:
-            await cl.Message(content="⚠️ El agente no está disponible.").send()
-            return
+try:
+    rag_chain = iniciar_agente()
+except Exception as e:
+    st.error(f"⚠️ Error al cargar el agente: {e}")
+    st.stop()
 
-        response = rag_chain.invoke({"input": message.content})
-        await cl.Message(content=response["answer"]).send()
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
-    except Exception as e:
-        await cl.Message(content=f"❌ Hubo un error: {str(e)}").send()
+if prompt := st.chat_input("Escribe tu pregunta aquí..."):
+    # Mostramos la pregunta del usuario
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
+
+    with st.chat_message("assistant"):
+        with st.spinner("Buscando en el manual corporativo..."):
+            try:
+                response = rag_chain.invoke({"input": prompt})
+                respuesta_texto = response["answer"]
+                st.markdown(respuesta_texto)
+                # Guardamos la respuesta en el historial
+                st.session_state.messages.append({"role": "assistant", "content": respuesta_texto})
+            except Exception as e:
+                st.error(f"❌ Hubo un error: {str(e)}")
