@@ -27,9 +27,9 @@ La solución implementa un flujo RAG optimizado para la nube:
 ## ⚙️ Instrucciones para Ejecutar el Proyecto Localmente
 
 1. Clona este repositorio en tu computadora:
-   ```bash
-   git clone [https://github.com/tu-usuario/tu-repositorio.git](https://github.com/tu-usuario/tu-repositorio.git)
-   cd tu-repositorio  
+   ```bash  
+   git clone [https://github.com/Filo1366/agente_ia_corporativo.git](https://github.com/Filo1366/agente_ia_corporativo.git)  
+   cd agente_ia_corporativo   
 2. Instala las dependencias necesarias:  
    pip install -r requirements.txt
 3. Configura tu variable de entorno con tu API Key de Cohere:  
