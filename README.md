@@ -1,41 +1,60 @@
-Agente Corporativo IA - Base de Conocimiento Interna
+# 💼 Asistente Corporativo de Inteligencia Artificial (RAG)
 
-Este proyecto es un agente de Inteligencia Artificial conversacional diseñado para interactuar con los documentos internos de una empresa (E-commerce). Permite a cualquier colaborador hacer preguntas en lenguaje natural y recibir respuestas precisas basadas en los manuales y políticas de la organización, reduciendo el tiempo de búsqueda de información.
+## 📌 Descripción General del Proyecto
+Este proyecto consiste en un Agente Inteligente basado en la arquitectura **RAG (Retrieval-Augmented Generation)** diseñado para asistir a los colaboradores de una empresa de e-commerce. El agente responde preguntas frecuentes sobre políticas internas, recursos humanos, finanzas y logistica.
+---
 
-## 🏗️ Arquitectura del Proyecto
+## 🏗️ Arquitectura de la Solución
+La solución implementa un flujo RAG optimizado para la nube:
+1. **Carga y Procesamiento:** El documento PDF (`manual_corporativo_ecommerce.pdf`) se divide en fragmentos manejables mediante `PyPDFLoader`.
+2. **Vectorización:** Los fragmentos de texto se convierten en vectores densos utilizando los modelos multilingües de **Cohere Embeddings**.
+3. **Almacenamiento Vectorial:** Se utiliza una base de datos vectorial local **FAISS** (`faiss_index`) para realizar búsquedas semánticas eficientes.
+4. **Generación de Respuestas:** El motor de lenguaje **Cohere Command-R** recibe la consulta del usuario junto con el contexto recuperado del manual para generar una respuesta precisa y acotada.
+5. **Interfaz de Usuario:** Aplicación web interactiva desarrollada en **Streamlit** y desplegada en la nube.
 
-El sistema está construido utilizando un enfoque RAG (Retrieval-Augmented Generation) con las siguientes tecnologías:
+---
 
-*   **Lenguaje:** Python
-*   **Orquestación:** LangChain
-*   **Procesamiento de Documentos:** `PyPDFLoader` para la lectura y fragmentación del manual corporativo.
-*   **Base de Conocimiento Vectorial:** FAISS (Facebook AI Similarity Search) para el almacenamiento y recuperación eficiente de fragmentos de texto.
-*   **Embeddings y LLM:** Cohere (`embed-multilingual-v3.0` para la vectorización y el modelo base `command` para la generación de respuestas en lenguaje natural).
+## 🛠️ Tecnologías y Herramientas Utilizadas
+* **Lenguaje:** Python 3.10+
+* **Orquestación de IA:** LangChain (`langchain-classic`, `langchain-community`)
+* **Modelo de Lenguaje y Embeddings:** Cohere API (`embed-multilingual-v3.0` y `command-r-08-2024`)
+* **Base de Datos Vectorial:** FAISS-CPU
+* **Interfaz Gráfica:** Streamlit
+* **Control de Versiones y Despliegue:** Git, GitHub y Streamlit Community Cloud
 
-## 💬 Ejemplos de Preguntas y Respuestas
+---
 
-El agente es capaz de resolver dudas sobre diversas áreas como Recursos Humanos, Operaciones y Finanzas.
+## ⚙️ Instrucciones para Ejecutar el Proyecto Localmente
 
-> **Usuario:** "Soy un nuevo empleado, ¿cuántos días de vacaciones tengo y cómo los pido?"
-> **Agente:** Tienes derecho a 20 días hábiles de vacaciones remuneradas si tienes más de un año de antigüedad. Las solicitudes deben hacerse a través del portal "HR-Connect" con al menos 15 días de anticipación.
+1. Clona este repositorio en tu computadora:
+   ```bash
+   git clone [https://github.com/tu-usuario/tu-repositorio.git](https://github.com/tu-usuario/tu-repositorio.git)
+   cd tu-repositorio
+2. Instala las dependencias necesarias:
+   pip install -r requirements.txt
+3. Configura tu variable de entorno con tu API Key de Cohere:
+   En Linux/Mac: export COHERE_API_KEY="tu_api_key"
+   En Windows (PowerShell): $env:COHERE_API_KEY="tu_api_key"
+4. Ejecuta la aplicación de Streamlit:
+   streamlit run app.py
+---
 
-> **Usuario:** "¿Cuál es el límite de gastos para hospedaje en un viaje de trabajo?"
-> **Agente:** El límite para gastos de hospedaje en un viaje de trabajo no debe superar los $150 USD diarios. Debes justificar el gasto subiendo las facturas al sistema "Expensify".
+💬 **Ejemplos de Preguntas que el Agente Puede Responder**
+¿Cuántos días de vacaciones me corresponden si tengo más de un año en la empresa?
+¿Cuál es el límite permitido para viáticos de alimentación en viajes de negocio?
+¿Qué debo hacer si recibo un correo sospechoso pidiendo credenciales?
+¿Cómo se manejan los productos devueltos que presentan daños menores al 10%?
 
-## 🚀 Instrucciones de Ejecución Local
+---
 
-Para correr este proyecto en tu propia máquina, sigue estos pasos:
+🤖 **Ejemplos de Respuestas Generadas por el Agente**
+Pregunta: ¿Cuál es la política de trabajo remoto y presencial?
+Respuesta: La empresa opera bajo un modelo híbrido flexible. Los colaboradores deben asistir a la oficina principal un mínimo de 2 días a la semana, permitiendo el trabajo remoto los días restantes.
 
-1. Clona este repositorio.
-2. Asegúrate de tener Python instalado.
-3. Instala las dependencias ejecutando:
-   `pip install -r requirements.txt`
-4. Configura tu variable de entorno con tu API Key de Cohere dentro del archivo `app.py`.
-5. Ejecuta la aplicación:
-   `python app.py`
+---
 
-## ☁️ Deploy en Oracle Cloud Infrastructure (OCI)
+☁️ **Evidencia del Deploy y Funcionamiento**
 
-A continuación se muestra la evidencia de la aplicación ejecutándose en un entorno de producción dentro de la nube de Oracle:
+1. Interfaz del Asistente en la Nube
 
-*(Nota: Aquí se insertará la imagen o enlace del deploy en OCI)*
+2. Estructura de Archivos del Repositorio
