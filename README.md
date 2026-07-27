@@ -56,5 +56,5 @@ Respuesta: La empresa opera bajo un modelo híbrido flexible. Los colaboradores 
 ☁️ **Evidencia del Deploy y Funcionamiento**
 
 1. Interfaz del Asistente en la Nube  
-
-2. Estructura de Archivos del Repositorio  
+https://agenteiacorporativo-hnxgbcyf7rdbhckxcbn898.streamlit.app/
+![Deploy en Streamlit](img/agente.png)
