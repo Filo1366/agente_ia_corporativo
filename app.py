@@ -6,7 +6,7 @@ from langchain_classic.chains import create_retrieval_chain
 from langchain_classic.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
 
-
+st.set_page_config(page_title="Asistente Corporativo", page_icon="💼")
 hide_streamlit_style = """
     <style>
     #MainMenu {visibility: hidden;}
@@ -14,12 +14,14 @@ hide_streamlit_style = """
     header {visibility: hidden;}
     </style>
 """
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 st.set_page_config(page_title="Asistente Corporativo", page_icon="💼")
 st.title("💼 Asistente de Políticas de la Empresa")
+
+if "messages" not in st.session_state:
+    st.session_state.messages = [
+        {"role": "assistant", "content": "¡Hola! Soy tu asistente corporativo. ¿Qué dudas tienes sobre las políticas?"}
+    ]
 
 @st.cache_resource
 def iniciar_agente():
