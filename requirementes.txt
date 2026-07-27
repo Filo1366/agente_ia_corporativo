@@ -1,7 +1,6 @@
-langchain
 langchain-classic
 langchain-community
 langchain-cohere
 faiss-cpu
 pypdf
-chainlit
+streamlit
