@@ -3,3 +3,4 @@ langchain-community
 langchain-cohere
 faiss-cpu
 pypdf
+chainlit
