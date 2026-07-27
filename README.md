@@ -1,4 +1,4 @@
-gente Corporativo IA - Base de Conocimiento Interna
+Agente Corporativo IA - Base de Conocimiento Interna
 
 Este proyecto es un agente de Inteligencia Artificial conversacional diseñado para interactuar con los documentos internos de una empresa (E-commerce). Permite a cualquier colaborador hacer preguntas en lenguaje natural y recibir respuestas precisas basadas en los manuales y políticas de la organización, reduciendo el tiempo de búsqueda de información.
 
