@@ -1,6 +1,5 @@
 import os
 import chainlit as cl
-import asyncio
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_cohere import CohereEmbeddings, ChatCohere
 from langchain_community.vectorstores import FAISS
@@ -8,7 +7,7 @@ from langchain_classic.chains import create_retrieval_chain
 from langchain_classic.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
 
-def iniciar_agente_pesado():
+def construir_agente():
     COHERE_API_KEY = os.environ.get("COHERE_API_KEY")
     
     loader = PyPDFLoader("manual_corporativo_ecommerce.pdf")
@@ -34,37 +33,40 @@ def iniciar_agente_pesado():
 
     question_answer_chain = create_stuff_documents_chain(llm, prompt)
     rag_chain = create_retrieval_chain(retriever, question_answer_chain)
+    
     return rag_chain
 
 @cl.on_chat_start
 async def start():
-    msg = cl.Message(content="⏳ Construyendo la base de conocimiento en segundo plano... Esto tomará unos segundos.")
-    await msg.send()
-    
-    try:
-        rag_chain = await asyncio.to_thread(iniciar_agente_pesado)
-        
-        cl.user_session.set("rag_chain", rag_chain)
-        msg.content = "¡Listo! Soy tu asistente corporativo. ¿Qué dudas tienes sobre las políticas de la empresa?"
-        await msg.update()
-        
-    except Exception as e:
-        msg.content = f"⚠️ Error al iniciar el agente: {str(e)}"
-        await msg.update()
+    await cl.Message(
+        content="¡Hola! Soy tu asistente corporativo. Escribe 'Hola' para que comience a leer el manual y podamos platicar."
+    ).send()
 
 @cl.on_message
 async def main(message: cl.Message):
     rag_chain = cl.user_session.get("rag_chain")
 
     if not rag_chain:
-        await cl.Message(content="⚠️ El agente no está disponible en este momento. Recarga la página.").send()
-        return
+        msg = cl.Message(content="⏳ Preparando el documento por primera vez... Dame unos 15 segundos.")
+        await msg.send()
+        
+        try:
+            rag_chain = construir_agente()
+            cl.user_session.set("rag_chain", rag_chain)
+            
+            msg.content = "✅ ¡Documento listo! Procesando tu pregunta..."
+            await msg.update()
+            
+        except Exception as e:
+            msg.content = f"❌ Error al cargar el documento: {str(e)}"
+            await msg.update()
+            return
 
     try:
-        response = await asyncio.to_thread(rag_chain.invoke, {"input": message.content})
+        response = rag_chain.invoke({"input": message.content})
         await cl.Message(content=response["answer"]).send()
-
+        
     except Exception as e:
         await cl.Message(
-            content=f"❌ Hubo un error al procesar tu solicitud: {str(e)}"
+            content=f"❌ Hubo un error al generar la respuesta: {str(e)}"
         ).send()
