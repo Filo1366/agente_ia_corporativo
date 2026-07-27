@@ -7,6 +7,7 @@ from langchain_classic.chains.combine_documents import create_stuff_documents_ch
 from langchain_core.prompts import ChatPromptTemplate
 
 st.set_page_config(page_title="Asistente Corporativo", page_icon="💼")
+
 hide_streamlit_style = """
     <style>
     #MainMenu {visibility: hidden;}
@@ -15,7 +16,6 @@ hide_streamlit_style = """
     </style>
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-st.set_page_config(page_title="Asistente Corporativo", page_icon="💼")
 st.title("💼 Asistente de Políticas de la Empresa")
 
 if "messages" not in st.session_state:
