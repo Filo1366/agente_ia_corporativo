@@ -1,5 +1,6 @@
 import os
 import chainlit as cl
+import asyncio
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_cohere import CohereEmbeddings, ChatCohere
 from langchain_community.vectorstores import FAISS
@@ -7,7 +8,7 @@ from langchain_classic.chains import create_retrieval_chain
 from langchain_classic.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
 
-def iniciar_agente():
+def iniciar_agente_pesado():
     COHERE_API_KEY = os.environ.get("COHERE_API_KEY")
     
     loader = PyPDFLoader("manual_corporativo_ecommerce.pdf")
@@ -37,14 +38,13 @@ def iniciar_agente():
 
 @cl.on_chat_start
 async def start():
-    msg = cl.Message(content="⏳ Leyendo el documento y conectando la IA. Esto puede tomar unos 15 segundos...")
+    msg = cl.Message(content="⏳ Construyendo la base de conocimiento en segundo plano... Esto tomará unos segundos.")
     await msg.send()
     
     try:
-        # Ejecutamos de forma directa. Es más seguro para la memoria de Render.
-        rag_chain = iniciar_agente()
-        cl.user_session.set("rag_chain", rag_chain)
+        rag_chain = await asyncio.to_thread(iniciar_agente_pesado)
         
+        cl.user_session.set("rag_chain", rag_chain)
         msg.content = "¡Listo! Soy tu asistente corporativo. ¿Qué dudas tienes sobre las políticas de la empresa?"
         await msg.update()
         
@@ -54,15 +54,14 @@ async def start():
 
 @cl.on_message
 async def main(message: cl.Message):
+    rag_chain = cl.user_session.get("rag_chain")
+
+    if not rag_chain:
+        await cl.Message(content="⚠️ El agente no está disponible en este momento. Recarga la página.").send()
+        return
+
     try:
-        rag_chain = cl.user_session.get("rag_chain")
-
-        if not rag_chain:
-            await cl.Message(content="⚠️ El agente no está disponible en este momento.").send()
-            return
-
-        response = rag_chain.invoke({"input": message.content})
-
+        response = await asyncio.to_thread(rag_chain.invoke, {"input": message.content})
         await cl.Message(content=response["answer"]).send()
 
     except Exception as e:
