@@ -40,21 +40,21 @@ La solución implementa un flujo RAG optimizado para la nube:
 ---
 
 💬 **Ejemplos de Preguntas que el Agente Puede Responder**
-¿Cuántos días de vacaciones me corresponden si tengo más de un año en la empresa?
-¿Cuál es el límite permitido para viáticos de alimentación en viajes de negocio?
-¿Qué debo hacer si recibo un correo sospechoso pidiendo credenciales?
-¿Cómo se manejan los productos devueltos que presentan daños menores al 10%?
+¿Cuántos días de vacaciones me corresponden si tengo más de un año en la empresa?  
+¿Cuál es el límite permitido para viáticos de alimentación en viajes de negocio?  
+¿Qué debo hacer si recibo un correo sospechoso pidiendo credenciales?  
+¿Cómo se manejan los productos devueltos que presentan daños menores al 10%?  
 
 ---
 
 🤖 **Ejemplos de Respuestas Generadas por el Agente**
-Pregunta: ¿Cuál es la política de trabajo remoto y presencial?
-Respuesta: La empresa opera bajo un modelo híbrido flexible. Los colaboradores deben asistir a la oficina principal un mínimo de 2 días a la semana, permitiendo el trabajo remoto los días restantes.
+Pregunta: ¿Cuál es la política de trabajo remoto y presencial?  
+Respuesta: La empresa opera bajo un modelo híbrido flexible. Los colaboradores deben asistir a la oficina principal un mínimo de 2 días a la semana, permitiendo el trabajo remoto los días restantes.  
 
 ---
 
 ☁️ **Evidencia del Deploy y Funcionamiento**
 
-1. Interfaz del Asistente en la Nube
+1. Interfaz del Asistente en la Nube  
 
-2. Estructura de Archivos del Repositorio
+2. Estructura de Archivos del Repositorio  
