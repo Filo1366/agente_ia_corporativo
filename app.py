@@ -37,18 +37,19 @@ def iniciar_agente():
 
 @cl.on_chat_start
 async def start():
-    msg = cl.Message(content="⏳ Leyendo el PDF y preparando la inteligencia artificial. Dame unos segundos...")
+    msg = cl.Message(content="⏳ Leyendo el documento y conectando la IA. Esto puede tomar unos 15 segundos...")
     await msg.send()
     
     try:
-        rag_chain = await cl.make_async(iniciar_agente)()
+        # Ejecutamos de forma directa. Es más seguro para la memoria de Render.
+        rag_chain = iniciar_agente()
         cl.user_session.set("rag_chain", rag_chain)
         
         msg.content = "¡Listo! Soy tu asistente corporativo. ¿Qué dudas tienes sobre las políticas de la empresa?"
         await msg.update()
         
     except Exception as e:
-        msg.content = f"⚠️ Error crítico al iniciar: {str(e)}"
+        msg.content = f"⚠️ Error al iniciar el agente: {str(e)}"
         await msg.update()
 
 @cl.on_message
@@ -60,7 +61,7 @@ async def main(message: cl.Message):
             await cl.Message(content="⚠️ El agente no está disponible en este momento.").send()
             return
 
-        response = await cl.make_async(rag_chain.invoke)({"input": message.content})
+        response = rag_chain.invoke({"input": message.content})
 
         await cl.Message(content=response["answer"]).send()
 
