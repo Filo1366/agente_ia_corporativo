@@ -7,6 +7,17 @@ from langchain_classic.chains.combine_documents import create_stuff_documents_ch
 from langchain_core.prompts import ChatPromptTemplate
 
 
+hide_streamlit_style = """
+    <style>
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    </style>
+"""
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 st.set_page_config(page_title="Asistente Corporativo", page_icon="💼")
 st.title("💼 Asistente de Políticas de la Empresa")
 
