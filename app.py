@@ -7,55 +7,42 @@ from langchain_classic.chains import create_retrieval_chain
 from langchain_classic.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
 
-def iniciar_agente():
-    try:
-        COHERE_API_KEY = os.environ.get("COHERE_API_KEY")
-        print("Cargando y leyendo el documento...")
-        
-        loader = PyPDFLoader("manual_corporativo_ecommerce.pdf")
-        documentos = loader.load_and_split()
-        
-        embeddings = CohereEmbeddings(model="embed-multilingual-v3.0", cohere_api_key=COHERE_API_KEY)
-        vectorstore = FAISS.from_documents(documentos, embeddings)
-        retriever = vectorstore.as_retriever()
-    
-        llm = ChatCohere(model="command-r-08-2024")
-    
-        system_prompt = (
-            "Eres un asistente corporativo de inteligencia artificial. "
-            "Responde las preguntas de los colaboradores utilizando ÚNICAMENTE la información provista en el contexto. "
-            "Si la respuesta no está en el contexto, di amablemente que no tienes esa información.\n\n"
-            "Contexto:\n{context}"
-        )
-    
-        prompt = ChatPromptTemplate.from_messages([
-            ("system", system_prompt),
-            ("human", "{input}"),
-        ])
+COHERE_API_KEY = os.environ.get("COHERE_API_KEY")
 
-        question_answer_chain = create_stuff_documents_chain(llm, prompt)
-        rag_chain = create_retrieval_chain(retriever, question_answer_chain)
-        return rag_chain
-        
-    except Exception as e:
-        print(f"Error al construir el agente: {e}")
-        return None
-        
+print("Cargando el PDF y creando la base de conocimiento...")
+loader = PyPDFLoader("manual_corporativo_ecommerce.pdf")
+documentos = loader.load_and_split()
+
+embeddings = CohereEmbeddings(model="embed-multilingual-v3.0", cohere_api_key=COHERE_API_KEY)
+vectorstore = FAISS.from_documents(documentos, embeddings)
+retriever = vectorstore.as_retriever()
+
+llm = ChatCohere(model="command-r-08-2024", cohere_api_key=COHERE_API_KEY)
+
+system_prompt = (
+    "Eres un asistente corporativo de inteligencia artificial. "
+    "Responde las preguntas de los colaboradores utilizando ÚNICAMENTE la información provista en el contexto. "
+    "Si la respuesta no está en el contexto, di amablemente que no tienes esa información.\n\n"
+    "Contexto:\n{context}"
+)
+
+prompt = ChatPromptTemplate.from_messages([
+    ("system", system_prompt),
+    ("human", "{input}"),
+])
+
+question_answer_chain = create_stuff_documents_chain(llm, prompt)
+agente_rag_global = create_retrieval_chain(retriever, question_answer_chain)
+
 
 @cl.on_chat_start
 async def start():
-    rag_chain = iniciar_agente()
+    # Asignamos el agente global a la sesión, de forma inmediata y sin trabar el servidor
+    cl.user_session.set("rag_chain", agente_rag_global)
     
-    if rag_chain is None:
-        await cl.Message(content="⚠️ Error crítico: No se pudo cargar el documento o la API. Revisa los logs").send()
-        return
-
-    cl.user_session.set("rag_chain", rag_chain)
-
     await cl.Message(
         content="¡Listo! Soy tu asistente corporativo. ¿Qué dudas tienes sobre las políticas de la empresa?"
     ).send()
-
 
 @cl.on_message
 async def main(message: cl.Message):
