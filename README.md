@@ -29,17 +29,17 @@ La solución implementa un flujo RAG optimizado para la nube:
 1. Clona este repositorio en tu computadora:
    ```bash
    git clone [https://github.com/tu-usuario/tu-repositorio.git](https://github.com/tu-usuario/tu-repositorio.git)
-   cd tu-repositorio
-2. Instala las dependencias necesarias:
+   cd tu-repositorio  
+2. Instala las dependencias necesarias:  
    pip install -r requirements.txt
-3. Configura tu variable de entorno con tu API Key de Cohere:
-   En Linux/Mac: export COHERE_API_KEY="tu_api_key"
-   En Windows (PowerShell): $env:COHERE_API_KEY="tu_api_key"
-4. Ejecuta la aplicación de Streamlit:
-   streamlit run app.py
+3. Configura tu variable de entorno con tu API Key de Cohere:  
+   En Linux/Mac: export COHERE_API_KEY="tu_api_key"  
+   En Windows (PowerShell): $env:COHERE_API_KEY="tu_api_key"  
+4. Ejecuta la aplicación de Streamlit:  
+   streamlit run app.py  
 ---
 
-💬 **Ejemplos de Preguntas que el Agente Puede Responder**
+💬 **Ejemplos de Preguntas que el Agente Puede Responder**  
 ¿Cuántos días de vacaciones me corresponden si tengo más de un año en la empresa?  
 ¿Cuál es el límite permitido para viáticos de alimentación en viajes de negocio?  
 ¿Qué debo hacer si recibo un correo sospechoso pidiendo credenciales?  
@@ -47,7 +47,7 @@ La solución implementa un flujo RAG optimizado para la nube:
 
 ---
 
-🤖 **Ejemplos de Respuestas Generadas por el Agente**
+🤖 **Ejemplos de Respuestas Generadas por el Agente**  
 Pregunta: ¿Cuál es la política de trabajo remoto y presencial?  
 Respuesta: La empresa opera bajo un modelo híbrido flexible. Los colaboradores deben asistir a la oficina principal un mínimo de 2 días a la semana, permitiendo el trabajo remoto los días restantes.  
 
